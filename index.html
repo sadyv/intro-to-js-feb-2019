@@ -4,16 +4,39 @@
     <meta charset="UTF-8">
     <title>Intro to JS</title>
     <script src="./js/test.js"></script>
+    <style>
+        .main-holder {
+            display: flex;
+
+        }
+        .main-holder > * {
+            border: 1px solid black;
+            width: 50%;
+            padding: 1em;
+        }
+    </style>
 </head>
 <body>
     <h1>Intro to JS</h1>
-<ul>
-    <li>
-        <a href="./day-1">day 1</a>
-    </li>
-     <li>
-        <a href="./day-1/luis.html">Luis</a>
-    </li>
-</ul>
+    <div class="main-holder">
+        <div>
+            <h2>What we have learned</h2>
+            <ul>
+                <li><a href="./1-what-we-learned/declaration.html">Declarations</a></li>
+                <li><a href="./1-what-we-learned/basic-dom.html">Basic Dom</a></li>
+            </ul>
+        </div>
+        <div>
+            <h2>What we have built</h2>
+            <ul>
+                <li>
+                    <a href="./day-1">day 1 - button</a>
+                </li>
+                <li>
+                    <a href="./day-1/challenge/vinson.html">day 1 - challenge</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
