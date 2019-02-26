@@ -3,18 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Day 1</title>
+    <style>
+        .clicked {
+            background-color: green;
+            font-size: 90px;
+            color: white;
+        }
+        button {
+            transition: all 1s ease;
+        }
+    </style>
 </head>
 <body>
+
+<button>
+    click me
+</button>
     
     
     
-    <script> 
-        var myVarVariable = 1;
-        var myvarvariable = 2;
-        const myConstVariable = true;
+    <script>
+        // we need colors to change the button to
+        const colors = ['black', 'red', 'green'];
+        colors[1] = colors[0];
+        colors[5] ='orange';
+        colors[0] ='black';
+        // we need a color to start with
+        let currentColor = 0;
+        //
+        const button = document.getElementsByTagName('button')[0];
+        button.addEventListener('mouseenter', whenClicked )
+
+        function whenClicked() {
+            setTimeout( () => {
+                button.style.backgroundColor = colors[currentColor];
+                currentColor++;
+            }, 1000);
+
+        }
+        // variable types
+        // boolean
+        var myVarVariable = true;
+        myVarVariable = false;
+
+        // numbers
+        myVarVariable = 1;
+
+        // strings
+        myVarVariable = 'hello';
+
+        // array
+        myVarVariable = [0, true, 'string'];
+        console.log(myVarVariable[0], myVarVariable[2]);
+        // objects
+        myVarVariable = {
+            age: 21,
+            name: 'John',
+            canDrive: true,
+            children: [{
+                age: 8,
+                name: 'John jr'
+            }],
+        };
+
         let myLetVariable = true;
-        myLetVariable = false;
-        console.log(myLetVariable);
+        console.log('myLetVariable', myLetVariable);
         
         
     
