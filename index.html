@@ -5,6 +5,22 @@
     <title>Intro to JS</title>
     <script src="./js/test.js"></script>
     <style>
+        body, html{
+            min-height: 100%;
+        }
+        h1 {
+            text-align: center;
+            display: inline-block;
+            margin: 0 auto;
+            font-family: “Roboto Slab”;
+            font-weight: 400;
+            font-size: 5em;
+            background: linear-gradient(330deg, #e05252 0%, #99e052 25%, #52e0e0 50%, #9952e0 75%, #e05252 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 200px;
+        }
+
         .main-holder {
             display: flex;
             margin-top: 1em;
@@ -32,13 +48,29 @@
         .repo {
             color: cornflowerblue;
         }
+        .left {
+            transform: translateX(-50vw);
+        }
+        .right {
+            transform: translateX(50vw);
+        }
+        .down {
+            transform: translateY(100vh);
+        }
+        .move {
+            transition: all .7s ease-in;
+        }
+        .top {
+            transform: translateY(-10vh);
+            color: black;
+        }
     </style>
 </head>
 <body>
-    <h1>Intro to JS</h1>
+    <h1 class="top move">Intro to JS</h1>
     <span class="repo">original repository: <span><a href="https://github.com/geekwisevinson/intro-to-js-feb-2019">intro-to-js-feb-2019</a></span></span>
     <div class="main-holder">
-        <div>
+        <div class="left move">
             <h2>What we have learned</h2>
             <ul>
                 <li>
@@ -49,9 +81,8 @@
                     </ul>
                 </li>
             </ul>
-
         </div>
-        <div>
+        <div class="right move">
             <h2>What we have built</h2>
             <ul>
                 <li>
@@ -70,18 +101,32 @@
     </div>
 
 <div class="main-holder">
-    <div>
+    <div class="down move">
         <h3>External Resources</h3>
         <ul>
             <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">MDN JavaScript</a></li>
         </ul>
     </div>
-    <div>
+    <div class="down move">
         <h3>Simple Thoughts</h3>
         <ul>
             <li><a href="./2-things-i-can-do/">What can I do as a programmer?</a></li>
         </ul>
     </div>
 </div>
+
+    <script>
+        console.log('one')
+        setTimeout(() => {
+            const allMoves = document.querySelectorAll('.move');
+            allMoves.forEach( item => {
+                item.classList.remove('left');
+                item.classList.remove('right');
+                item.classList.remove('down');
+                console.log('ran')
+            });
+            document.querySelector('h1').classList.remove('top')
+        }, 10)
+    </script>
 </body>
 </html>
