@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Master</title>
+    <script src="lib/codemirror.js"></script>
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script type="text/javascript"
+            src="mode/xml/xml.js"></script>
+    <script type="text/javascript"
+            src="mode/htmlmixed/htmlmixed.js"></script>
+    <script type="text/javascript"
+            src="mode/javascript/javascript.js"></script>
+    <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
+    <script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
+    <script src="http://codemirror.net/addon/hint/xml-hint.js"></script>
+    <script src="http://codemirror.net/addon/hint/html-hint.js"></script>
+    <script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+</head>
+<body>
+
+<style>
+    html, body {
+        height: 100%;
+        background-color: moccasin;
+        overflow: hidden;
+    }
+
+    body * {
+        box-sizing: border-box;
+        margin: 0;
+    }
+    main {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        height: 100%;
+    }
+
+    .view {
+        background-color: whitesmoke;
+        display: grid;
+        grid-template-columns: 300px auto;
+
+    }
+
+    .controls {
+        background-color: red;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+    }
+
+    .controls  button {
+        padding: .4em;
+        background-color: lightgreen;
+        border-radius: 10%;
+        font-weight: bolder;
+    }
+
+    .instructions {
+        background-color: black;
+        color: white;
+        text-align: center;
+        padding: .4em;
+    }
+
+    #world {
+        background-color: deepskyblue;
+    }
+
+
+
+
+
+</style>
+
+<main>
+
+    <div class="view">
+
+        <div class="instructions">
+
+        </div>
+        <div id="world">
+
+        </div>
+
+    </div>
+    <div class="controls">
+        <!--<div id="html">-->
+            <!--HTML-->
+        <!--</div>-->
+        <div id="javascript">
+            JavaScript
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: center">
+            <button>Run</button>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    // const html1 = createCM(document.querySelector('#html'), 'html', 'html1');
+    const js1 = createCM(document.querySelector('#javascript'), 'js', 'js1');
+    // html1.on('keyup', this.changeDetectedCm);
+    // html1.on('mousedown', this.mouseDownDetectedCm);
+    js1.on('keyup', this.changeDetectedCm);
+    js1.on('mousedown', this.mouseDownDetectedCm);
+
+    function createCM(el, type, name) {
+        const htmlConfig = {
+            lineNumbers: true,
+            extraKeys: {
+                "Ctrl-Space": "autocomplete"
+            },
+            mode: "text/html"
+        };
+        const jsConfig = {
+            lineNumbers: true,
+            extraKeys: {
+                "Ctrl-Space": "autocomplete"
+            },
+            mode: {
+                name: "javascript",
+                globalVars: true
+            }
+        };
+        const cm = CodeMirror(el, type === 'html' ? htmlConfig : jsConfig);
+        cm.changeDetectedCm = changeDetectedCm;
+        cm.mouseDownDetectedCm = mouseDownDetectedCm;
+        cm.cmName = name;
+        return cm;
+    }
+
+    function changeDetectedCm(e, cm) {
+        console.log('change detected', e, cm);
+    }
+
+    function mouseDownDetectedCm(e, cm) {
+        console.log('mouseDown', e, cm);
+    }
+</script>
+<!--ready-->
+<script>
+
+    let scene = 0;
+    const game = {
+        instructions : 'hello',
+    };
+
+
+    const instructions = document.querySelector('.instructions');
+
+
+    const sequence = [
+        {
+            instructions: 'Hello...',
+            wait: 2000,
+        },
+        {
+            instructions: 'Wake up!!',
+            wait: 3000,
+        },
+        {
+            instructions: 'We need your help.',
+            test: test,
+            variables: {
+              a: null,
+            },
+            answer: function answer() {
+                console.log(this.variables.a);
+            }
+        },
+        {
+            instructions: 'you did it',
+            answer: 'test',
+        }
+    ];
+    function gameLoop() {
+        handleScene();
+        window.requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+
+    function handleScene() {
+        if (sequence[scene].wait) {
+            console.log('wait', sequence[scene].wait);
+            if (sequence[scene].start) {
+                console.log('start', sequence[scene].start);
+                if (new Date() - sequence[scene].start > sequence[scene].wait ) {
+                    console.log('been to long');
+                    moveToNextScene()
+                } else {
+                    console.log('no', sequence[scene].start - new Date());
+                }
+            } else {
+                sequence[scene].start = new Date();
+            }
+        } else {
+            sequence[scene].test();
+        }
+        handleInstructions();
+    }
+
+    function handleInstructions() {
+        instructions.innerHTML = sequence[scene].instructions;
+    }
+
+    function moveToNextScene() {
+        scene++;
+        if (scene >= sequence.length) {
+            scene = 0;
+        }
+    }
+
+
+    function test() {
+        let str = js1.getValue();
+        const mapObj = {
+            'const' : 'var',
+            'let' : "var"
+        };
+        str = str.replace(/const|let/gi, function(matched){
+            return mapObj[matched];
+        });
+        try {
+            eval(str);
+            var result = esprima.parse(str);
+            console.log('a', result, this);
+
+        } catch (e) {
+            console.log('error', e);
+        }
+
+    }
+</script>
+</body>
+</html>
