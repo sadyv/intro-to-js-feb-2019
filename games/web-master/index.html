@@ -47,16 +47,15 @@
     .controls {
         background-color: red;
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
 
-    .controls  button {
-        padding: .4em;
-        background-color: lightgreen;
-        border-radius: 10%;
-        font-weight: bolder;
+    .controls button {
+        flex: 1;
     }
+
+
 
     .instructions {
         background-color: black;
@@ -91,11 +90,11 @@
         <!--<div id="html">-->
             <!--HTML-->
         <!--</div>-->
+        <div style="display: flex; ">
+            <button onclick="run()">Run</button><button onclick="resetHtml()">Reset</button>
+        </div>
         <div id="javascript">
             JavaScript
-        </div>
-        <div style="display: flex; flex-direction: column; justify-content: center">
-            <button>Run</button>
         </div>
     </div>
 </main>
@@ -104,6 +103,7 @@
 <script>
     // const html1 = createCM(document.querySelector('#html'), 'html', 'html1');
     const js1 = createCM(document.querySelector('#javascript'), 'js', 'js1');
+    const world = document.querySelector('#world');
     // html1.on('keyup', this.changeDetectedCm);
     // html1.on('mousedown', this.mouseDownDetectedCm);
     js1.on('keyup', this.changeDetectedCm);
@@ -135,17 +135,16 @@
     }
 
     function changeDetectedCm(e, cm) {
-        console.log('change detected', e, cm);
     }
 
     function mouseDownDetectedCm(e, cm) {
-        console.log('mouseDown', e, cm);
     }
 </script>
 <!--ready-->
 <script>
 
     let scene = 0;
+    let shouldTest = false;
     const game = {
         instructions : 'hello',
     };
@@ -158,19 +157,25 @@
         {
             instructions: 'Hello...',
             wait: 2000,
+            startingHTML : 'hello',
         },
         {
             instructions: 'Wake up!!',
+            startingHTML: 'hello',
             wait: 3000,
         },
         {
-            instructions: 'We need your help.',
+            instructions: 'We need your help. From this world I can only communicate with you through javascript.',
             test: test,
-            variables: {
-              a: null,
-            },
-            answer: function answer() {
-                console.log(this.variables.a);
+            startingHTML: 'world',
+            answer: function answer(vars) {
+                console.log('answer', vars.answer);
+                if (vars.answer === true) {
+                    console.log('yep');
+                    moveToNextScene();
+                } else {
+                    console.log('nope');
+                }
             }
         },
         {
@@ -186,11 +191,8 @@
 
     function handleScene() {
         if (sequence[scene].wait) {
-            console.log('wait', sequence[scene].wait);
             if (sequence[scene].start) {
-                console.log('start', sequence[scene].start);
                 if (new Date() - sequence[scene].start > sequence[scene].wait ) {
-                    console.log('been to long');
                     moveToNextScene()
                 } else {
                     console.log('no', sequence[scene].start - new Date());
@@ -198,8 +200,12 @@
             } else {
                 sequence[scene].start = new Date();
             }
-        } else {
-            sequence[scene].test();
+        } else if (sequence[scene].test) {
+            if (shouldTest === true) {
+                sequence[scene].test();
+                shouldTest = false;
+            }
+
         }
         handleInstructions();
     }
@@ -213,27 +219,67 @@
         if (scene >= sequence.length) {
             scene = 0;
         }
+        if (sequence[scene].startingHTML) {
+            document.getElementById('world').innerHTML = sequence[scene].startingHTML;
+        } else  {
+            sequence[scene].startingHTML =  document.getElementById('world').innerHTML;
+        }
+        js1.setValue('');
+    }
+
+    function resetHtml() {
+        if (sequence[scene].startingHTML) {
+            document.getElementById('world').innerHTML = sequence[scene].startingHTML;
+        } else {
+            document.getElementById('world').innerHTML = '';
+        }
+    }
+
+    function run() {
+        shouldTest = true;
     }
 
 
     function test() {
         let str = js1.getValue();
         const mapObj = {
-            'const' : 'var',
-            'let' : "var"
+            'const' : 'window.',
+            'let' : "window."
         };
+        str = str.replace(/\s/g, '');
+        str = str.replace('document.body', 'document.getElementById(`world`)');
         str = str.replace(/const|let/gi, function(matched){
             return mapObj[matched];
         });
         try {
+            console.log(str, this.last)
+            if (str === this.last) {return}
+            console.log('ran');
+            this.last = str;
             eval(str);
             var result = esprima.parse(str);
-            console.log('a', result, this);
+            console.log('result', result);
+            var vars = result.body.map( v => {
+                console.log(v.expression);
+                if (!v.expression || v.expression && !v.expression.left) {
+                    return null;
+                }
+                return [v.kind, v.expression.left.property.name]
+            });
+            vars = vars.filter( i => i);
+            var testObj = {};
+
+            vars.forEach( v => {
+                testObj[v[1]] = window[v[1]];
+            })
 
         } catch (e) {
             console.log('error', e);
         }
 
+        if (vars) {
+            this.answer(testObj);
+        }
     }
 </script>
 </body>
