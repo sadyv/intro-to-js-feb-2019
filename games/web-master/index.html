@@ -5,12 +5,9 @@
     <title>Web Master</title>
     <script src="lib/codemirror.js"></script>
     <link rel="stylesheet" href="lib/codemirror.css">
-    <script type="text/javascript"
-            src="mode/xml/xml.js"></script>
-    <script type="text/javascript"
-            src="mode/htmlmixed/htmlmixed.js"></script>
-    <script type="text/javascript"
-            src="mode/javascript/javascript.js"></script>
+    <script type="text/javascript" src="mode/xml/xml.js"></script>
+    <script type="text/javascript" src="mode/htmlmixed/htmlmixed.js"></script>
+    <script type="text/javascript" src="mode/javascript/javascript.js"></script>
     <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
     <script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
     <script src="http://codemirror.net/addon/hint/xml-hint.js"></script>
@@ -30,10 +27,11 @@
         box-sizing: border-box;
         margin: 0;
     }
+
     main {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr auto;
+        grid-template-rows: auto 1fr auto;
         height: 100%;
     }
 
@@ -41,7 +39,6 @@
         background-color: whitesmoke;
         display: grid;
         grid-template-columns: 300px auto;
-
     }
 
     .controls {
@@ -55,8 +52,6 @@
         flex: 1;
     }
 
-
-
     .instructions {
         background-color: black;
         color: white;
@@ -64,42 +59,57 @@
         padding: .4em;
     }
 
-    #world {
-        background-color: deepskyblue;
+    .instructions p {
+        margin: .5em;
     }
 
+    .instructions-text {
+        padding-top: .5em;
+        padding-bottom: .5em;
+        background-color: darkblue;
+    }
 
+    .instructions-area {
+        padding: .5em;
+        background-color: darkslategrey;
+    }
 
+    .instructions .instructions-text span {
+        background: moccasin;
+        color: green;
+        padding: 0 .2em;
+    }
 
-
+    .next { background-color: lightgreen}
+    .reset {background-color: lightcoral}
 </style>
-
 <main>
-
+    <div>Press Next to Continue</div>
     <div class="view">
-
         <div class="instructions">
-
+            <div class="instructions-text">
+            </div>
+            <div class="instructions-error">
+            </div>
+            <div class="instructions-guide">
+            </div>
         </div>
         <div id="world">
-
         </div>
-
     </div>
     <div class="controls">
         <!--<div id="html">-->
-            <!--HTML-->
+        <!--HTML-->
         <!--</div>-->
         <div style="display: flex; ">
-            <button onclick="run()">Run</button><button onclick="resetHtml()">Reset</button>
+            <button class="next" onclick="run()">Next</button>
+            <button class="reset" onclick="resetHtml()">Reset</button>
         </div>
         <div id="javascript">
             JavaScript
         </div>
     </div>
 </main>
-
-
 <script>
     // const html1 = createCM(document.querySelector('#html'), 'html', 'html1');
     const js1 = createCM(document.querySelector('#javascript'), 'js', 'js1');
@@ -142,30 +152,47 @@
 </script>
 <!--ready-->
 <script>
-
+    document
     let scene = 0;
     let shouldTest = false;
     const game = {
-        instructions : 'hello',
+        instructions: 'hello',
     };
-
-
-    const instructions = document.querySelector('.instructions');
-
-
+    const instructions = document.querySelector('.instructions-text');
     const sequence = [
         {
             instructions: 'Hello...',
-            wait: 2000,
-            startingHTML : 'hello',
+            wait: 3000,
         },
         {
-            instructions: 'Wake up!!',
+            instructions: `Is anyone there??`,
+            startingHTML: 'hello',
+            wait: 2000,
+        },
+        {
+            instructions: `Its you!! Amazing. Ha.`,
             startingHTML: 'hello',
             wait: 3000,
         },
         {
-            instructions: 'We need your help. From this world I can only communicate with you through javascript.',
+            instructions: `The WebMaster!`,
+            startingHTML: 'hello',
+            wait: 3000,
+        },
+        {
+            instructions: `Someone from your js1 class broke the internet.`,
+            startingHTML: 'hello',
+            wait: 5000,
+        },
+        {
+            instructions: `
+            We need your help.
+            From this world I can only communicate with you through javascript.
+            <p>
+            Can you help us?
+</p>
+            <p class="instructions-area">create a variable named <span>answer</span> and set it to <span>true</span></p>
+            `,
             test: test,
             startingHTML: 'world',
             answer: function answer(vars) {
@@ -175,7 +202,12 @@
                     moveToNextScene();
                 } else {
                     console.log('nope');
+                    this.caseNot();
+                    resetHtml();
                 }
+            },
+            caseNot: function() {
+                document.querySelector('.instructions-error').innerHTML = `That's not right try again?!`
             }
         },
         {
@@ -183,16 +215,18 @@
             answer: 'test',
         }
     ];
+
     function gameLoop() {
         handleScene();
         window.requestAnimationFrame(gameLoop);
     }
+
     gameLoop();
 
     function handleScene() {
         if (sequence[scene].wait) {
             if (sequence[scene].start) {
-                if (new Date() - sequence[scene].start > sequence[scene].wait ) {
+                if (new Date() - sequence[scene].start > sequence[scene].wait) {
                     moveToNextScene()
                 } else {
                     console.log('no', sequence[scene].start - new Date());
@@ -215,14 +249,15 @@
     }
 
     function moveToNextScene() {
+        document.querySelector('.instructions-error').innerHTML = ``;
         scene++;
         if (scene >= sequence.length) {
             scene = 0;
         }
         if (sequence[scene].startingHTML) {
             document.getElementById('world').innerHTML = sequence[scene].startingHTML;
-        } else  {
-            sequence[scene].startingHTML =  document.getElementById('world').innerHTML;
+        } else {
+            sequence[scene].startingHTML = document.getElementById('world').innerHTML;
         }
         js1.setValue('');
     }
@@ -239,44 +274,42 @@
         shouldTest = true;
     }
 
-
     function test() {
         let str = js1.getValue();
         const mapObj = {
-            'const' : 'window.',
-            'let' : "window."
+            'const': 'window.',
+            'let': "window."
         };
         str = str.replace(/\s/g, '');
         str = str.replace('document.body', 'document.getElementById(`world`)');
-        str = str.replace(/const|let/gi, function(matched){
+        str = str.replace(/const|let/gi, function (matched) {
             return mapObj[matched];
         });
         try {
             console.log(str, this.last)
-            if (str === this.last) {return}
+            if (str === this.last) {
+                return
+            }
             console.log('ran');
             this.last = str;
             eval(str);
             var result = esprima.parse(str);
             console.log('result', result);
-            var vars = result.body.map( v => {
+            var vars = result.body.map(v => {
                 console.log(v.expression);
                 if (!v.expression || v.expression && !v.expression.left) {
                     return null;
                 }
-                return [v.kind, v.expression.left.property.name]
+                return [v.kind, v.expression.left.property? v.expression.left.property.name : v.expression.left.name]
             });
-            vars = vars.filter( i => i);
+            vars = vars.filter(i => i);
             var testObj = {};
-
-            vars.forEach( v => {
+            vars.forEach(v => {
                 testObj[v[1]] = window[v[1]];
             })
-
         } catch (e) {
             console.log('error', e);
         }
-
         if (vars) {
             this.answer(testObj);
         }
