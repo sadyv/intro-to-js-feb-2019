@@ -21,6 +21,7 @@
     const h1 = document.createElement('h1');
     h1.style.color = 'lime';
     h1.innerText = month;
+    h1.style[`text-shadow`] = `3px 2px 3px black`;
     body.appendChild(h1);
     // how many weeks to display;
     const weeks = 6;
@@ -72,6 +73,8 @@
             day.style.backgroundColor = 'olive';
             if (dayNumber === new Date().getDate()) {
                 day.style.backgroundColor = 'lime';
+                day.style.color = 'white';
+                day.style[`text-shadow`] = `3px 2px 3px #1C6EA4`;
             }
         } else {
             day.innerText = 'x';
