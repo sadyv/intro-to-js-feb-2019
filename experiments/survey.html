@@ -21,15 +21,16 @@
         <h4>3: I used it and made it work</h4>
         <h4>4: I used it and I understand it</h4>
     </div>
-    <div style="flex: 1; justify-content: center; align-items: center">
-        <textarea name="" id="textA" cols="60" rows="12"></textarea>
-        Copy or &nbsp;
-        <a href="javascript:void(0)" download="data.txt">
-            Download Text
-        </a>
-    </div>
 
 
+
+</div>
+<div id="relocate" style="flex: 1; justify-content: center; align-items: center">
+    <textarea name="" id="textA" cols="60" rows="12"></textarea>
+    Copy or &nbsp;
+    <a href="javascript:void(0)" download="data.txt">
+        Download Text
+    </a>
 </div>
 
 
@@ -123,6 +124,7 @@
 
     }
     updateDownloadHref();
+    body.appendChild(document.querySelector('#relocate'))
 </script>
 
 
