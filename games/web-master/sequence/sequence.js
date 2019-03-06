@@ -1,3 +1,4 @@
+var global = {};
 var myName = '';
 const sequence = [
     {
@@ -15,7 +16,7 @@ const sequence = [
         wait: 3000,
     },
     {
-        instructions: `Someone from your js1 class broke the internet.`,
+        instructions: `Someone from your javascript class broke the internet.`,
         startingHTML: 'hello',
         wait: 5000,
     },
@@ -41,23 +42,23 @@ const sequence = [
                 resetHtml();
             }
         },
+        load: function() {
+            console.log('load')
+        },
         caseNot: function() {
             document.querySelector('.instructions-error').innerHTML = `That's not right try again?!`
         }
     },
     {
         instructions: 'You.. you did it!',
-        answer: 'test',
         wait: 2000,
     },
     {
         instructions: "I can't believe you did that so easy...",
-        answer: 'test',
         wait: 2000,
     },
     {
         instructions: "Are you a web magician?",
-        answer: 'test',
         wait: 2000,
     },
     {
@@ -71,7 +72,8 @@ const sequence = [
             console.log('name', vars.myName);
             if (typeof vars.myName === 'string' && vars.myName.length > 2) {
                 console.log('yep');
-                myName = vars.myName;
+                window.myName = vars.myName;
+                global.myName = vars.myName;
                 moveToNextScene();
             } else {
                 console.log('nope');
@@ -85,39 +87,39 @@ const sequence = [
     },
     {
         instructions: "You are a liar.",
-        answer: 'test',
         wait: 2000,
     },
     {
         instructions: "This cant be.",
-        answer: 'test',
         wait: 2000,
     },
     {
         instructions: "My powers are still weak but I will try to append something to the page.",
-        answer: 'test',
         wait: 2000,
     },
     {
-        instructions:  `Don't you see.. It's you!`,
-        startingHTML:  `
-<div style='background: url("./img/old-scroll.png");; background-size: 500px 400px; width: 500px; height: 400px; background-repeat: no-repeat;' >
+        load: function() {
+            console.log('load');
+          this.startingHTML =    `
+<div class="magic" style='background: url("./img/old-scroll.png");; background-size: 500px 400px; width: 500px; height: 400px; background-repeat: no-repeat;' >
 
-<p style="position: relative; padding: 4.3em 4em  1em 4em;">
-    Legend has it that one day someone from Vinson's js1 class will become the webmaster.
+<p style="position: relative; padding: 3em 3em  .3em 3em;">
+    One day in a land with no Fres.... a legend will rise the prophecy says...
 </p>
-<p style="position: relative; padding: 0 4em;">
+<p style="position: relative; padding: 0 3em;">
     They will fix the internet.
 </p>
-<p style="position: relative; padding: 0 4em;">
-    There will be no bugs.. only parties.
+<p style="position: relative; padding: 0 3em;">
+    because they took vinson's Intro to javascript.
 </p>
-<p style="position: relative; padding: 0 4em;">
-    Their name will be ${myName ? myName : 'some name'}
+<p style="position: relative; padding: .3em 3em;">
+    They will be called ${window.myName ? window.myName : 'some name'}... which translates to "the Web Master"...
 </p>
 </div>
            
-        `,
-        answer: 'test',
+        `;
+        },
+        instructions:  `Don't you see.. It's you!`,
+        startingHTML:  ``,
     },
 ];

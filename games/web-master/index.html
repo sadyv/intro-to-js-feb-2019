@@ -83,6 +83,16 @@
 
     .next { background-color: lightgreen}
     .reset {background-color: lightcoral}
+
+
+    .magic {
+        font-family: 'Magic', Arial, sans-serif;
+        font-size: 1.7em;
+    }
+    @font-face {
+        font-family: "Magic";
+        src: url("./dungeon.ttf");
+    }
 </style>
 <main>
     <div>Press Next to Continue</div>
@@ -154,7 +164,7 @@
 <!--ready-->
 <script>
     let skip = false;
-    let scene = true? 0 : sequence.length -2;
+    let scene = true ? 0 : sequence.length -2;
     let shouldTest = false;
     const game = {
         instructions: 'hello',
@@ -175,7 +185,6 @@
                     console.log('skip', skip);
                     moveToNextScene()
                 } else {
-                    console.log('no', sequence[scene].start - new Date());
                 }
             } else {
                 sequence[scene].start = new Date();
@@ -201,6 +210,9 @@
         scene++;
         if (scene >= sequence.length) {
             scene = 0;
+        }
+        if (sequence[scene].load) {
+            sequence[scene].load();
         }
         if (sequence[scene].startingHTML) {
             document.getElementById('world').innerHTML = sequence[scene].startingHTML;
@@ -256,11 +268,11 @@
             var testObj = {};
             vars.forEach(v => {
                 testObj[v[1]] = window[v[1]];
-            })
+            });
         } catch (e) {
             console.log('error', e);
         }
-        if (vars) {
+        if (vars && this.answer) {
             this.answer(testObj);
         }
     }
@@ -268,6 +280,7 @@
     document.addEventListener('keyup', checkSkip);
     function checkSkip() {
         skip = true;
+        run();
     }
     sequence.forEach( s => {
         s.answer ? s.test = test : void(null);
