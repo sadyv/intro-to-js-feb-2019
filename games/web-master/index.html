@@ -16,6 +16,7 @@
 </head>
 <body>
 
+<script src="./sequence/sequence.js"></script>
 <style>
     html, body {
         height: 100%;
@@ -152,69 +153,13 @@
 </script>
 <!--ready-->
 <script>
-    document
-    let scene = 0;
+    let skip = false;
+    let scene = true? 0 : sequence.length -2;
     let shouldTest = false;
     const game = {
         instructions: 'hello',
     };
     const instructions = document.querySelector('.instructions-text');
-    const sequence = [
-        {
-            instructions: 'Hello...',
-            wait: 3000,
-        },
-        {
-            instructions: `Is anyone there??`,
-            startingHTML: 'hello',
-            wait: 2000,
-        },
-        {
-            instructions: `Its you!! Amazing. Ha.`,
-            startingHTML: 'hello',
-            wait: 3000,
-        },
-        {
-            instructions: `The WebMaster!`,
-            startingHTML: 'hello',
-            wait: 3000,
-        },
-        {
-            instructions: `Someone from your js1 class broke the internet.`,
-            startingHTML: 'hello',
-            wait: 5000,
-        },
-        {
-            instructions: `
-            We need your help.
-            From this world I can only communicate with you through javascript.
-            <p>
-            Can you help us?
-</p>
-            <p class="instructions-area">create a variable named <span>answer</span> and set it to <span>true</span></p>
-            `,
-            test: test,
-            startingHTML: 'world',
-            answer: function answer(vars) {
-                console.log('answer', vars.answer);
-                if (vars.answer === true) {
-                    console.log('yep');
-                    moveToNextScene();
-                } else {
-                    console.log('nope');
-                    this.caseNot();
-                    resetHtml();
-                }
-            },
-            caseNot: function() {
-                document.querySelector('.instructions-error').innerHTML = `That's not right try again?!`
-            }
-        },
-        {
-            instructions: 'you did it',
-            answer: 'test',
-        }
-    ];
 
     function gameLoop() {
         handleScene();
@@ -226,7 +171,8 @@
     function handleScene() {
         if (sequence[scene].wait) {
             if (sequence[scene].start) {
-                if (new Date() - sequence[scene].start > sequence[scene].wait) {
+                if (new Date() - sequence[scene].start > sequence[scene].wait || skip) {
+                    console.log('skip', skip);
                     moveToNextScene()
                 } else {
                     console.log('no', sequence[scene].start - new Date());
@@ -249,6 +195,8 @@
     }
 
     function moveToNextScene() {
+        sequence[scene].start = null;
+        skip = false;
         document.querySelector('.instructions-error').innerHTML = ``;
         scene++;
         if (scene >= sequence.length) {
@@ -277,14 +225,16 @@
     function test() {
         let str = js1.getValue();
         const mapObj = {
-            'const': 'window.',
-            'let': "window."
+            'const ': 'window.',
+            'let ': "window.",
+            'var ': "window."
         };
-        str = str.replace(/\s/g, '');
+        // str = str.replace(/\s/g, '');
         str = str.replace('document.body', 'document.getElementById(`world`)');
-        str = str.replace(/const|let/gi, function (matched) {
+        str = str.replace(/const\s|let\s|var\s/gi, function (matched) {
             return mapObj[matched];
         });
+        console.log('script', str);
         try {
             console.log(str, this.last)
             if (str === this.last) {
@@ -314,6 +264,14 @@
             this.answer(testObj);
         }
     }
+
+    document.addEventListener('keyup', checkSkip);
+    function checkSkip() {
+        skip = true;
+    }
+    sequence.forEach( s => {
+        s.answer ? s.test = test : void(null);
+    })
 </script>
 </body>
 </html>
