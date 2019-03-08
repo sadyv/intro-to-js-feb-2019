@@ -119,7 +119,23 @@ const sequence = [
            
         `;
         },
-        instructions:  `Don't you see.. It's you!`,
+        instructions:  `
+                Don't you see.. It's you!
+                <p>I am a web magician too. I can help you fulfill your potential. </p>
+                <p>create a variable called <span>answer</span> and assign it the number 1 if you want me to help</p>
+            `,
         startingHTML:  ``,
+        answer: function answer(vars) {
+            if (vars.answer === 1) {
+                moveToNextScene();
+            } else {
+                console.log('nope');
+                this.caseNot();
+                resetHtml();
+            }
+        },
+        caseNot: function() {
+            document.querySelector('.instructions-error').innerHTML = `Please?!`
+        }
     },
 ];

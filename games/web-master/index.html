@@ -220,6 +220,7 @@
             sequence[scene].startingHTML = document.getElementById('world').innerHTML;
         }
         js1.setValue('');
+        js1.focus()
     }
 
     function resetHtml() {
@@ -278,9 +279,11 @@
     }
 
     document.addEventListener('keyup', checkSkip);
-    function checkSkip() {
-        skip = true;
-        run();
+    function checkSkip(e) {
+        if (e.shiftKey && e.code === 'Enter') {
+            skip = true;
+            run();
+        }
     }
     sequence.forEach( s => {
         s.answer ? s.test = test : void(null);
