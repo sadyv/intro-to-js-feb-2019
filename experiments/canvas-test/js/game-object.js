@@ -10,6 +10,8 @@ class GameObject {
     spriteIndex  = 0;
     xSpeed = 0;
     ySpeed = 0;
+    yOffset = 0;
+    xOffset = 0;
     xLastDirection = -1;
     sprite = {
         img: null,
@@ -21,94 +23,6 @@ class GameObject {
         }
     };
     sprites = {
-        standing: [
-            {
-                x: 0,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 2,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 3,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 4,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 5,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 6,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 7,
-                y: 0,
-                w: 80,
-                h: 100,
-            },
-        ],
-        walking: [
-            {
-                x: 0,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 2,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 3,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 4,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-            {
-                x: 80 * 5,
-                y: 99,
-                w: 80,
-                h: 100,
-            },
-        ],
     };
     constructor(x,y,w,h, context, sprite) {
         this.x = x;
@@ -136,7 +50,8 @@ class GameObject {
     }
 
     draw() {
-
+        const currentSprite = this.sprites[this.currentAction][this.spriteIndex];
+        console.log('sprite index', this.sprites[this.currentAction][this.spriteIndex] )
         if (this.xLastDirection === -1) {
             this.context.save();
             this.context.translate(this.x, this.y);  //location on the canvas to draw your sprite, this is important.
@@ -157,18 +72,19 @@ class GameObject {
         }
 
         if (this.xLastDirection === 1) {
+            console.log('sprite index', this.sprites[this.currentAction][this.spriteIndex] )
             this.context.drawImage(
                 this.sprite.img,
                 this.sprite.config.x,
                 this.sprite.config.y,
                 this.sprite.config.w,
                 this.sprite.config.h,
-                this.x,
-                this.y,
+                this.x + (this.sprites[this.currentAction][this.spriteIndex].xOffset ? this.sprites[this.currentAction][this.spriteIndex].xOffset : 0),
+                this.y + (this.sprites[this.currentAction][this.spriteIndex].yOffset ? this.sprites[this.currentAction][this.spriteIndex].yOffset : 0),
                 this.w,
                 this.h,
             );
         }
-
+        console.log(this.xLastDirection)
     }
 }

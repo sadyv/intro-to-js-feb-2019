@@ -141,6 +141,15 @@ class Player extends GameObject {
             },
 
         ],
+        ducking: [
+            {
+                x: 80,
+                y: 92 * 3,
+                w: 80,
+                h: 100,
+            },
+
+        ],
     };
     
     constructor(x,y,w,h, context, sprite)  {
@@ -151,7 +160,7 @@ class Player extends GameObject {
 
         this.xDirection = ( (keys['ArrowRight'] ? 1 : 0) + (keys['ArrowLeft'] ? -1 : 0 ) );
         this.aiming = keys['KeyA'];
-        console.log('A', keys);
+        this.duck = keys['Space'];
         if (Math.sign(this.xDirection)) {
             this.xLastDirection = this.xDirection;
         }
