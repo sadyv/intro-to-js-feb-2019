@@ -37,7 +37,7 @@ class Game {
 
     play() {
         this.gameObjects.push(new Player(100, 350, 100, 100, this.context, this.sprites[0]));
-
+        this.gameObjects.push(new Player(100, 250, 100, 100, this.context, this.sprites[0]));
         this.loop();
     }
 
